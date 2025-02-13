@@ -1,5 +1,5 @@
 import express,{Request,Response} from "express";
-import Configuration from "./config/config";
+import Configuration from "./src/config/config";
 const {Port} = Configuration
 const app = express();
 
