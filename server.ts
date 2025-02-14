@@ -1,26 +1,33 @@
-import express,{Request,Response,NextFunction} from "express";
-import { HttpError} from "http-errors";
-import createHttpError from "http-errors";
+import express from "express";
+import cors from "cors";
 import Configuration from "./src/config/config";
 import connectDB from "./src/config/db";
-const {Port,env} = Configuration
+import globalErrorHandler from "./src/middleware/globalErrorHandler";
+import userRouter from "./src/user/user.route";
+
+const { Port } = Configuration;
 const app = express();
-app.use((err:HttpError,req:Request,res:Response,next:NextFunction):any=>{
-    const statusCode = err.statusCode || 500;
-    return res.status(statusCode).json({message:err.message,errorStack:env==='development' ? err.stack :''});
+app.use(express.json());
+app.use(globalErrorHandler);
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://eduufy.netlify.app/"],
+    methods: ["GET", "POST", "PUT", "DELETE","PATCH" ,"OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    credentials: true,
+    optionsSuccessStatus: 200,
+    maxAge: 86400,
+    exposedHeaders: ["Content-Length", "X-Kuma-Revision"],
+  })
+);
+app.use("/api/v1", userRouter);
 
-});
-
-
-
-app.get("/",(req:Request,res:Response,next:NextFunction)=>{
-const error = createHttpError(400,"Something went wrong");
-throw error;
-res.json({message:"Hello world I am server",statusCode:200})
-
-});
-
-app.listen(Port,async ()=>{
+app.listen(Port, async () => {
+  try {
     await connectDB();
-    console.log(`Listening to port ${Port}`);
-})
+    console.log(`Listening on port ${Port}`);
+  } catch (error) {
+    console.error("Failed to connect to database", error);
+    process.exit(1);
+  }
+});
