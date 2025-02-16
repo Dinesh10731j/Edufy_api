@@ -8,3 +8,12 @@ export interface IUser extends Document {
     isActive:boolean,
     generateAuthToken: () => string;
   }
+
+export interface ILivestream extends Document {
+  hostId: string;
+  streamKey: string;
+  title: string;
+  viewers: number;
+  createdAt: Date;
+  isLive:boolean;
+}

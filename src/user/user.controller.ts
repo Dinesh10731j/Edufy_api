@@ -32,12 +32,11 @@ export const userSignUp = async (
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const hashedConfirmPassword = await bcrypt.hash(confirmPassword,saltRounds);
-
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
-      confirmPassword: hashedConfirmPassword,
+      confirmPassword:hashedConfirmPassword
     });
 
     await newUser.save();
@@ -70,13 +69,15 @@ export const userLogIn = async (
     }
 
     const user = await User.findOne({ email });
-    console.log("This is userData",user);
 
     if (!user) {
       return next(createHttpError(404, "User not found"));
     }
 
-    const isPasswordMatched = await bcrypt.compare(password,user?.confirmPassword);
+    const isPasswordMatched = await bcrypt.compare(
+      password,
+      user?.password
+    );
 
     if (!isPasswordMatched) {
       return next(createHttpError(401, "Invalid Credentials"));
@@ -84,7 +85,7 @@ export const userLogIn = async (
 
     const token = user.generateAuthToken();
 
-    res.status(200).json({token:token});
+    res.status(200).json({ token: token });
   } catch (error: unknown) {
     if (error instanceof Error) {
       return next(createHttpError(500, error.message));
@@ -92,3 +93,8 @@ export const userLogIn = async (
     return next(createHttpError(500, "An unexpected error occurred"));
   }
 };
+
+
+
+
+

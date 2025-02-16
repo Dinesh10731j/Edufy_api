@@ -24,13 +24,14 @@ const UserSchema: Schema<IUser> = new Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: [8, "Password must be at least 8 characters long"],
-      select: false,
     },
-    confirmPassword: {
-      type: String,
-      required: [true, "Please confirm your password"],
-      minlength:[8,"confirmPassword must be at least 8 characters long"]
-    },
+
+confirmPassword:{
+  type:String,
+  required:[true,"confirmPassword is required"],
+  minlength:[8, "confirmPassword must be at least 8 characters long"],
+  select:false
+},
 
     isLoggedIn: {
       type: Boolean,
