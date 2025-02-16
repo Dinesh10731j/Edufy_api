@@ -17,3 +17,13 @@ export interface ILivestream extends Document {
   createdAt: Date;
   isLive:boolean;
 }
+
+export interface ContactFormInputs extends Document {
+  inquiryPurpose: string;
+  description: string;
+  fullName: string;
+  email: string;
+  organization: string;
+  phone: string;
+  message: string;
+}
