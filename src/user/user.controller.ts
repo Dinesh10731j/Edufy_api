@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import createHttpError from "http-errors";
 import bcrypt from "bcrypt";
-import User from "./user.model";
+import { User } from "./user.model";
+import { Contact } from "./user.model";
 
 export const userSignUp = async (
   req: Request,
@@ -31,12 +32,15 @@ export const userSignUp = async (
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const hashedConfirmPassword = await bcrypt.hash(confirmPassword,saltRounds);
+    const hashedConfirmPassword = await bcrypt.hash(
+      confirmPassword,
+      saltRounds
+    );
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
-      confirmPassword:hashedConfirmPassword
+      confirmPassword: hashedConfirmPassword,
     });
 
     await newUser.save();
@@ -74,10 +78,7 @@ export const userLogIn = async (
       return next(createHttpError(404, "User not found"));
     }
 
-    const isPasswordMatched = await bcrypt.compare(
-      password,
-      user?.password
-    );
+    const isPasswordMatched = await bcrypt.compare(password, user?.password);
 
     if (!isPasswordMatched) {
       return next(createHttpError(401, "Invalid Credentials"));
@@ -94,7 +95,66 @@ export const userLogIn = async (
   }
 };
 
+export const userContact = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const {
+      description,
+      email,
+      phone,
+      inquiryPurpose,
+      organization,
+      fullName,
+      message,
+    } = req.body;
 
+    if (
+      !description ||
+      !email ||
+      !phone ||
+      !inquiryPurpose ||
+      !organization ||
+      !fullName ||
+      !message
+    ) {
+      return next(createHttpError(400, "All fields are required"));
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return next(createHttpError(400, "Invalid email format"));
+    }
 
+    const isContactAlreadyExists = await Contact.findOne({ email });
 
+    if (isContactAlreadyExists) {
+      next(createHttpError(400, "User contact already exists"));
+    }
 
+    await Contact.create({
+      fullName,
+      email,
+      description,
+      phone,
+      inquiryPurpose,
+      organization,
+      message,
+    });
+
+    res
+      .status(201)
+      .json({
+        message:
+          "Thank you for reaching out! Your inquiry has been submitted successfully. We will get back to you soon.",
+        success: true,
+      });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      next(createHttpError(500, error.message));
+    }
+
+    next(createHttpError(500, "An unexpected error occurred"));
+  }
+};
