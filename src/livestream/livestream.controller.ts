@@ -1,79 +1,109 @@
 import { Request, Response, NextFunction } from "express";
 import createHttpError from "http-errors";
-import LiveStream from "./livestream.model";
-
-// Start a Livestream
-export const startLiveStream = async (req: Request, res: Response, next: NextFunction) => {
+import livestreamModel from "./livestream.model";
+import { AuthRequest } from "../utils/types";
+export const startLiveStream = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { host } = req.body;
-    console.log("Received host in request body:", req.body);
-    const existingLiveStream = await LiveStream.findOne({ host, isLive: true });
+    const { title, streamKey } = req.body;
+    const _req = req as unknown as AuthRequest;
+   
+    
+    // Basic validation
+    if (!_req.id||!title || !streamKey) {
+      return next(createHttpError(400, "Missing required fields: hostId, title, or streamKey"));
+    }
+
+    const existingLiveStream = await livestreamModel.findOne({ hostId: _req.id, isLive: true });
     if (existingLiveStream) {
       return next(createHttpError(400, "A livestream is already active."));
     }
 
-    const newLiveStream = new LiveStream({ host, isLive: true, viewers: 0 });
+
+
+    const newLiveStream = new livestreamModel({
+      hostId:_req.id,
+      streamKey,
+      title,
+      viewers: 0,
+      isLive: true
+    });
     await newLiveStream.save();
-
-    res.status(201).json({ message: "Livestream started successfully!", liveStream: newLiveStream });
-  } catch (error:unknown) {
-
-    if(error instanceof Error){
-        next(createHttpError(500, "Failed to start livestream"));
+    res
+      .status(201)
+      .json({
+        message: "Livestream started successfully!",
+        liveStream: newLiveStream,
+      });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return next(createHttpError(error.message));
     }
-
-    next(createHttpError(500,"Something went wrong,An unknown error occured!"));
-    
+    next(createHttpError(500, "Failed to start livestream"));
   }
 };
-
 // Join a Livestream
-export const joinLiveStream = async (req: Request, res: Response, next: NextFunction) => {
+export const joinLiveStream = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { host } = req.params;
    
+    const _req = req as unknown as AuthRequest;
 
-
-    const liveStream = await LiveStream.findOne({ host, isLive: true });
+    if(!_req.id){
+      return next(createHttpError(400,"HostId is missing"));
+    }
+    const liveStream = await livestreamModel.findOneAndUpdate(
+      { host:_req.id, isLive: true },
+      { $inc: { viewers: 1 } },
+      { new: true }
+    );
     if (!liveStream) {
       return next(createHttpError(404, "Livestream not found or not active"));
     }
-
-    liveStream.viewers += 1;
-    await liveStream.save();
-
     res.status(200).json({ message: "Joined livestream", liveStream });
-  } catch (error:unknown) {
-
-    if(error instanceof Error){
-        next(createHttpError(500, "Failed to join livestream"));
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return next(createHttpError(500, error.message));
     }
-    next(createHttpError(500, "Something went wrong,Anu unknown error occured!"));
-
-   
+    next(createHttpError(500, "Failed to join livestream"));
   }
 };
 
 // End a Livestream
-export const endLiveStream = async (req: Request, res: Response, next: NextFunction) => {
+export const endLiveStream = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { host } = req.body;
+   
+    const _req = req as unknown as AuthRequest;
 
-    const liveStream = await LiveStream.findOne({ host, isLive: true });
+    if(!_req.id){
+      return next(createHttpError(400,"HostId is missing"));
+
+    }
+    const liveStream = await livestreamModel.findOneAndUpdate(
+      { host:_req.id, isLive: true },
+      { isLive: false, viewers: 0 },
+      { new: true }
+    );
     if (!liveStream) {
-      return next(createHttpError(404, "Livestream not found or already ended"));
+      return next(
+        createHttpError(404, "Livestream not found or already ended")
+      );
     }
-
-    liveStream.isLive = false;
-    liveStream.viewers = 0;
-    await liveStream.save();
-
     res.status(200).json({ message: "Livestream ended successfully!" });
-  } catch (error:unknown) {
-    if(error instanceof Error){
-        next(createHttpError(500, "Failed to end livestream"));
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return next(createHttpError(error.message));
     }
-    next(createHttpError(500, "Something went wrong,Anu unknown error occured!"));
-
+    next(createHttpError(500, "Failed to end livestream"));
   }
 };

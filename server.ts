@@ -22,7 +22,7 @@ app.use(cors({
 }));
 
 // API Routes
-app.use("/api/v1/users", userRouter);
+app.use("/api/v1/user", userRouter);
 app.use("/api/v1/livestream", liveStreamRouter);
 
 // WebSocket Setup

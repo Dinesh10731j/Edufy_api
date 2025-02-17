@@ -1,4 +1,5 @@
 import { Document } from "mongoose";
+import { Request } from "express";
 export interface IUser extends Document {
     name: string;
     email: string;
@@ -26,4 +27,10 @@ export interface ContactFormInputs extends Document {
   organization: string;
   phone: string;
   message: string;
+}
+
+
+export interface AuthRequest extends Request {
+  id: string;
+ 
 }
