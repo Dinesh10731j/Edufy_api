@@ -44,8 +44,8 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("sendMessage", ({ host, message }) => {
-    io.to(host).emit("receiveMessage", message);
+  socket.on("send-message", ({ user, message }) => {
+    io.to(user).emit("receive-message", message);   
   });
 
   socket.on("leaveLive", (host) => {
@@ -59,8 +59,8 @@ io.on("connection", (socket) => {
     console.log("User disconnected:", socket.id);
   });
 
-  socket.on("ice-candidate", (data) => {
-    socket.broadcast.emit("ice-candidate", data);
+  socket.on("start-stream", (data) => {
+    socket.broadcast.emit("start-stream", data);
   });
 });
 
