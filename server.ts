@@ -14,12 +14,14 @@ const server = http.createServer(app);
 
 app.use(express.json());
 app.use(globalErrorHandler);
-app.use(cors({
-  origin: ["http://localhost:3000", "https://eduufy.netlify.app/"],
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://eduufy.netlify.app/"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    credentials: true,
+  })
+);
 
 // API Routes
 app.use("/api/v1/user", userRouter);
@@ -37,7 +39,9 @@ io.on("connection", (socket) => {
 
   socket.on("joinLive", (host) => {
     socket.join(host);
-    io.to(host).emit("viewerCount", { viewers: io.sockets.adapter.rooms.get(host)?.size || 0 });
+    io.to(host).emit("viewerCount", {
+      viewers: io.sockets.adapter.rooms.get(host)?.size || 0,
+    });
   });
 
   socket.on("sendMessage", ({ host, message }) => {
@@ -46,11 +50,17 @@ io.on("connection", (socket) => {
 
   socket.on("leaveLive", (host) => {
     socket.leave(host);
-    io.to(host).emit("viewerCount", { viewers: io.sockets.adapter.rooms.get(host)?.size || 0 });
+    io.to(host).emit("viewerCount", {
+      viewers: io.sockets.adapter.rooms.get(host)?.size || 0,
+    });
   });
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
+  });
+
+  socket.on("ice-candidate", (data) => {
+    socket.broadcast.emit("ice-candidate", data);
   });
 });
 
