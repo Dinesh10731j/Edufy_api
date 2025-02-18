@@ -59,7 +59,7 @@ export const joinLiveStream = async (
       return next(createHttpError(400,"HostId is missing"));
     }
     const liveStream = await livestreamModel.findOneAndUpdate(
-      { host:_req.id, isLive: true },
+      { hostId:_req.id, isLive: true },
       { $inc: { viewers: 1 } },
       { new: true }
     );
@@ -90,7 +90,7 @@ export const endLiveStream = async (
 
     }
     const liveStream = await livestreamModel.findOneAndUpdate(
-      { host:_req.id, isLive: true },
+      { hostId:_req.id, isLive: true },
       { isLive: false, viewers: 0 },
       { new: true }
     );

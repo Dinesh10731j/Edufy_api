@@ -10,6 +10,6 @@ const router = express.Router();
 
 router.post("/start", authenticateUser, startLiveStream);
 router.get("/join/:host",authenticateUser ,joinLiveStream);
-router.post("/end",authenticateUser ,endLiveStream);
+router.patch("/end",authenticateUser ,endLiveStream);
 
 export default router;
