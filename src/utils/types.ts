@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document,Schema} from "mongoose";
 import { Request } from "express";
 export interface IUser extends Document {
     name: string;
@@ -33,4 +33,24 @@ export interface ContactFormInputs extends Document {
 export interface AuthRequest extends Request {
   id: string;
  
+}
+
+
+
+export interface ICourse extends Document {
+  title:string,
+  hashtags:string[],
+  courseInstructor:Schema.Types.ObjectId,ref:"User",
+  blocks:[
+    {
+      id:string,
+      type:string,
+      data:{
+        text:string,
+      },
+      version:string,
+      time:number
+
+    }
+  ]
 }

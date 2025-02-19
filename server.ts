@@ -7,7 +7,7 @@ import connectDB from "./src/config/db";
 import globalErrorHandler from "./src/middleware/globalErrorHandler";
 import userRouter from "./src/user/user.route";
 import liveStreamRouter from "./src/livestream/livestream.route";
-
+import courseRouter from "./src/course/course.route";
 const { Port } = Configuration;
 const app = express();
 const server = http.createServer(app);
@@ -26,6 +26,7 @@ app.use(
 // API Routes
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/livestream", liveStreamRouter);
+app.use("/api/v1/course", courseRouter);
 
 // WebSocket Setup
 const io = new Server(server, {
