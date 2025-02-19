@@ -38,19 +38,16 @@ export interface AuthRequest extends Request {
 
 
 export interface ICourse extends Document {
-  title:string,
-  hashtags:string[],
-  courseInstructor:Schema.Types.ObjectId,ref:"User",
-  blocks:[
-    {
-      id:string,
-      type:string,
-      data:{
-        text:string,
-      },
-      version:string,
-      time:number
-
-    }
-  ]
+  title: string;
+  hashtags: string;
+  courseInstructor:{type:Schema.Types.ObjectId,ref:"User"},
+  blocks: Array<{
+    id: string;
+    type: string;
+    data: {
+      text: string;
+    };
+    version: string; 
+    time: number; 
+  }>;
 }

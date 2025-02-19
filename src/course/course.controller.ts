@@ -9,6 +9,10 @@ export const createCourse = async (
 ) => {
   const coursePrice = 200;
   const { title, hashtags, blocks } = req.body;
+
+  console.log("This is blocks",blocks);
+  console.log("This is title",title);
+  console.log("This is hashtags",hashtags);
   try {
     const _req = req as unknown as AuthRequest;
 
@@ -30,10 +34,10 @@ if(!_req.id){
   } catch (error: unknown) {
     if (error instanceof Error) {
       return next(
-        createHttpError(500, "An error occurred while creating course")
+        createHttpError(500, error.message)
       );
     }
 
-    next(createHttpError(500, "An error occurred while creating course"));
+    next(createHttpError(500, "An unexpected error occurred"));
   }
 };
