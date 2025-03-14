@@ -30,10 +30,10 @@ if(!_req.id){
   } catch (error: unknown) {
     if (error instanceof Error) {
       return next(
-        createHttpError(500, "An error occurred while creating course")
+        createHttpError(500, error.message)
       );
     }
 
-    next(createHttpError(500, "An error occurred while creating course"));
+    next(createHttpError(500, "An unexpected error occurred"));
   }
 };
