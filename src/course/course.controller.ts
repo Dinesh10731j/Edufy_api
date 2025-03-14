@@ -9,10 +9,6 @@ export const createCourse = async (
 ) => {
   const coursePrice = 200;
   const { title, hashtags, blocks } = req.body;
-
-  console.log("This is blocks",blocks);
-  console.log("This is title",title);
-  console.log("This is hashtags",hashtags);
   try {
     const _req = req as unknown as AuthRequest;
 
