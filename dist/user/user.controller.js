@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userContact = exports.userLogIn = exports.userSignUp = void 0;
 const http_errors_1 = __importDefault(require("http-errors"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const user_model_1 = require("./user.model");
 const user_model_2 = require("./user.model");
 const userSignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -35,8 +35,8 @@ const userSignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             return next((0, http_errors_1.default)(409, "User with this email already exists"));
         }
         const saltRounds = 10;
-        const hashedPassword = yield bcrypt_1.default.hash(password, saltRounds);
-        const hashedConfirmPassword = yield bcrypt_1.default.hash(confirmPassword, saltRounds);
+        const hashedPassword = yield bcryptjs_1.default.hash(password, saltRounds);
+        const hashedConfirmPassword = yield bcryptjs_1.default.hash(confirmPassword, saltRounds);
         const newUser = new user_model_1.User({
             name,
             email,
@@ -69,7 +69,7 @@ const userLogIn = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         if (!user) {
             return next((0, http_errors_1.default)(404, "User not found"));
         }
-        const isPasswordMatched = yield bcrypt_1.default.compare(password, user === null || user === void 0 ? void 0 : user.password);
+        const isPasswordMatched = yield bcryptjs_1.default.compare(password, user === null || user === void 0 ? void 0 : user.password);
         if (!isPasswordMatched) {
             return next((0, http_errors_1.default)(401, "Invalid Credentials"));
         }
