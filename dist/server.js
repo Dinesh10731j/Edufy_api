@@ -28,7 +28,7 @@ const server = http_1.default.createServer(app);
 app.use(express_1.default.json());
 app.use(globalErrorHandler_1.default);
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:3000", "https://eduufy.netlify.app/"],
+    origin: ["http://localhost:3000", "https://eduufy.netlify.app"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     credentials: true,
@@ -40,7 +40,7 @@ app.use("/api/v1/course", course_route_1.default);
 // WebSocket Setup
 const io = new socket_io_1.Server(server, {
     cors: {
-        origin: ["http://localhost:3000", "https://eduufy.netlify.app/"],
+        origin: ["http://localhost:3000", "https://eduufy.netlify.app"],
     },
 });
 io.on("connection", (socket) => {
