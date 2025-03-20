@@ -27,6 +27,8 @@ app.use(
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/livestream", liveStreamRouter);
 app.use("/api/v1/course", courseRouter);
+courseRouter.use(express.json({ limit: '10mb' }));  
+courseRouter.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // WebSocket Setup
 const io = new Server(server, {

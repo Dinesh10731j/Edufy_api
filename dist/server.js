@@ -37,6 +37,8 @@ app.use((0, cors_1.default)({
 app.use("/api/v1/user", user_route_1.default);
 app.use("/api/v1/livestream", livestream_route_1.default);
 app.use("/api/v1/course", course_route_1.default);
+course_route_1.default.use(express_1.default.json({ limit: '10mb' }));
+course_route_1.default.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));
 // WebSocket Setup
 const io = new socket_io_1.Server(server, {
     cors: {
