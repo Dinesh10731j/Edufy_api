@@ -33,21 +33,39 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Course = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+const courseBlocks = new mongoose_1.Schema({
+    id: { type: String, required: true },
+    type: {
+        type: String,
+        enum: ["header", "image", "paragraph", "list", "code", "table"],
+        required: true,
+    },
+    data: {
+        text: { type: String },
+        level: { type: Number },
+        caption: { type: String },
+        file: {
+            url: { type: String },
+        },
+        stretched: { type: Boolean, default: false },
+        withBackground: { type: Boolean, default: false },
+        withBorder: { type: Boolean, default: false },
+        ParagraphText: { type: String },
+        codeData: {
+            code: { type: String },
+        },
+        items: {
+            type: (Array),
+            default: [],
+        }
+    },
+}, { _id: false });
 const courseSchema = new mongoose_1.Schema({
-    title: { type: String, required: true },
-    hashtags: [{ type: String }],
-    courseInstructor: { type: mongoose_1.default.Schema.ObjectId, required: true, ref: "User" },
-    blocks: [{
-            id: { type: String, required: true },
-            type: { type: String, required: true },
-            data: {
-                text: { type: String, required: false }
-            },
-            version: { type: String, required: false },
-            time: { type: Number, required: false }
-        }]
+    title: { type: String, required: true, trim: true },
+    hashtags: { type: String, required: true, trim: true },
+    blocks: [courseBlocks],
+    courseInstructor: { type: mongoose_1.Schema.Types.ObjectId, ref: "User" },
 }, { timestamps: true });
-exports.Course = mongoose_1.default.model("Course", courseSchema);
-exports.default = exports.Course;
+const Course = mongoose_1.default.model("Course", courseSchema);
+exports.default = Course;

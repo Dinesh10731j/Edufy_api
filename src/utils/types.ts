@@ -41,13 +41,25 @@ export interface ICourse extends Document {
   title: string;
   hashtags: string;
   courseInstructor:{type:Schema.Types.ObjectId,ref:"User"},
-  blocks: Array<{
-    id: string;
-    type: string;
-    data: {
-      text: string;
-    };
-    version: string; 
-    time: number; 
-  }>;
+  id: { type: string, required: true },
+    type: {
+      type: string,
+      enum: ["header", "image", "paragraph", "list" ,"code","table",],
+      required: true,
+    },
+ data:{
+   style: { type: string, enum: ["unordered", "ordered"] }, 
+   items: { type: [string], default: [] },
+
+ },
+
+
+  // For image type
+  caption: { type: string },
+  file: {
+    url: { type: string },
+  },
+  stretched: { type: boolean, default: false },
+  withBackground: { type: boolean, default: false },
+  withBorder: { type: boolean, default: false },
 }
