@@ -2,6 +2,9 @@ import createHttpError from "http-errors";
 import { Request, Response, NextFunction } from "express";
 import Course from "./course.model";
 import { AuthRequest } from "../utils/types";
+import cloudinary from "../config/cloudinary";
+import fs from "fs";
+import path from "path";
 export const createCourse = async (
   req: Request,
   res: Response,
@@ -34,6 +37,33 @@ if(!_req.id){
       );
     }
 
-    next(createHttpError(500, "An unexpected error occurred"));
+   next(createHttpError(500, "An unexpected error occurred"));
   }
 };
+
+
+
+export const uploadImage = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
+  if (!req.file) {
+    res.status(400).json({ message: "No image uploaded." });
+    return;
+  }
+
+  const filePath = path.resolve(__dirname, "../../uploads", req.file.filename);
+
+
+  try {
+    const result = await cloudinary.uploader.upload(filePath, {
+      folder: "course_images", 
+      public_id: req.file.filename.split(".")[0],
+    });
+
+    fs.unlinkSync(filePath);
+
+    res.status(200).json({ imageUrl: result.secure_url });
+  } catch (error) {
+    console.error("Cloudinary upload error:", error);
+    next(createHttpError(500, "Image upload failed"));
+  }
+};
+

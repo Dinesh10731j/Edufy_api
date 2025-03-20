@@ -1,4 +1,4 @@
-import { Document,Schema} from "mongoose";
+import { Document} from "mongoose";
 import { Request } from "express";
 export interface IUser extends Document {
     name: string;
@@ -37,29 +37,27 @@ export interface AuthRequest extends Request {
 
 
 
-export interface ICourse extends Document {
-  title: string;
-  hashtags: string;
-  courseInstructor:{type:Schema.Types.ObjectId,ref:"User"},
-  id: { type: string, required: true },
-    type: {
-      type: string,
-      enum: ["header", "image", "paragraph", "list" ,"code","table",],
-      required: true,
-    },
- data:{
-   style: { type: string, enum: ["unordered", "ordered"] }, 
-   items: { type: [string], default: [] },
+interface ICourseBlockData {
+    text?: string;
+    level?: number;
+    caption?: string;
+    file?: {
+        url: string;
+    };
+    stretched?: boolean;
+    withBackground?: boolean;
+    withBorder?: boolean;
+    ParagraphText?: string;
+    codeData?: {
+        code: string;
+    };
+    style?: "unordered" | "ordered";
+    items?: string[];
+}
 
- },
-
-
-  // For image type
-  caption: { type: string },
-  file: {
-    url: { type: string },
-  },
-  stretched: { type: boolean, default: false },
-  withBackground: { type: boolean, default: false },
-  withBorder: { type: boolean, default: false },
+export interface ICourseBlock {
+    id: string;
+    type: "header" | "image" | "paragraph" | "list" | "code" | "table";
+    data: ICourseBlockData;
+    
 }

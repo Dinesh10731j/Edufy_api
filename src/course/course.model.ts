@@ -1,30 +1,5 @@
 import mongoose,{Schema} from "mongoose";
-
-
-interface ICourseBlockData {
-    text?: string;
-    level?: number;
-    caption?: string;
-    file?: {
-        url: string;
-    };
-    stretched?: boolean;
-    withBackground?: boolean;
-    withBorder?: boolean;
-    ParagraphText?: string;
-    codeData?: {
-        code: string;
-    };
-    style?: "unordered" | "ordered";
-    items?: string[];
-}
-
-interface ICourseBlock {
-    id: string;
-    type: "header" | "image" | "paragraph" | "list" | "code" | "table";
-    data: ICourseBlockData;
-    
-}
+import { ICourseBlock } from "../utils/types";
 
 const courseBlocks = new Schema<ICourseBlock>({
     id: { type: String, required: true },
