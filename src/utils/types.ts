@@ -57,7 +57,7 @@ interface ICourseBlockData {
 
 export interface ICourseBlock {
     id: string;
-    type: "header" | "image" | "paragraph" | "list" | "code" | "table";
+    type: "header" | "image" | "paragraph" | "list" | "code" | "table" | "checklist" | "warning" | "quote" | "raw";
     data: ICourseBlockData;
     
 }
