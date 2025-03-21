@@ -5,15 +5,18 @@ const courseBlocks = new Schema<ICourseBlock>({
     id: { type: String, required: true },
     type: {
         type: String,
-        enum: ["header", "image", "paragraph", "list", "code","table"],
+        enum: ["header", "image", "paragraph", "list", "code","table" ,"checklist","warning","quote","raw"],
         required: true,
     },
     data: {
         text: { type: String },
         level: { type: Number },
         caption: { type: String },
+        alignment: { type: String },
         file: {
-            url: { type: String },
+            url:{
+                imageUrl:{type:String}
+            },
         },
         stretched: { type: Boolean, default: false },
         withBackground: { type: Boolean, default: false },
@@ -26,6 +29,19 @@ const courseBlocks = new Schema<ICourseBlock>({
         items: {
             type: Array<string>,
             default: [],
+        },
+
+        content:{
+            type:[[String]]
+        },
+        title:{
+            type:String
+        },
+        message:{
+            type:String
+        },
+        html:{
+            type:String
         }
     },
 }, { _id: false });
